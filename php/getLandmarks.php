@@ -8,7 +8,7 @@ $longitude = $_REQUEST['longitude'];
 $latitude = $_REQUEST['latitude'];
 
 $curl = curl_init();
-$url='https://reverse.geocoder.ls.hereapi.com/6.2/reversegeocode.json?apiKey=LQB09zWJr1LcBdz-Y1nY8lI6rid58s7cOkJcNpi5zP4&mode=retrieveLandmarks&prox=' . $latitude . ',' . $longitude. ',8000';
+$url='https://reverse.geocoder.ls.hereapi.com/6.2/reversegeocode.json?apiKey=KEY!&mode=retrieveLandmarks&prox=' . $latitude . ',' . $longitude. ',8000';
 $ch = curl_init();
 curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 curl_setopt($ch, CURLOPT_URL, $url);
