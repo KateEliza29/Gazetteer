@@ -222,7 +222,7 @@
         </section>
     </div>
 <script src="include/vendors/jquery-3.5.1.min.js"></script>
-<script src="include/js/app2.js"></script>
+<script src="include/js/app.js"></script>
 
 </body>
 </html>
