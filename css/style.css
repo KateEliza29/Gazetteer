@@ -1,0 +1,254 @@
+* {
+    box-sizing: border-box;
+}
+
+body {
+    overflow: auto;
+}
+/* Text */
+p {
+    font-size: 1.5rem;
+}
+
+p.small {
+    font-size: 1rem;
+    margin: 0px; 
+}
+
+h1,
+h2,
+h3,
+h4 {
+    font-family: monospace;
+}
+
+nav h1 {
+    font-size: 4rem;
+    font-weight: 700;
+    letter-spacing: 4px;
+    display: none;
+}
+
+@media only screen and (min-width: 780px) {
+    nav h1 {
+        display: inline;
+    }
+} 
+
+
+#dataDisplay h2 {
+    font-size: 3rem;
+    font-weight: 700;
+}
+
+#dataDisplay h3 {
+    font-size: 2.5rem;
+    font-weight: 700;
+}
+
+#dataDisplay h4 {
+    font-size: 2rem;
+    font-weight: 700;
+}
+
+
+
+/* Map */
+#worldMap { 
+    margin: 10px;
+    height: 90vh;
+    border-radius: 20px 5px;
+    z-index: 0;
+}
+
+#info {
+    width: 80px;
+    position: absolute;
+    right: 30px;
+    bottom: 30px;
+    filter: drop-shadow(2px 2px 2px);
+    cursor: pointer;
+    animation: none 0.7s linear both;
+}
+
+#landmark {
+    width: 80px;
+    position: absolute;
+    right: 30px;
+    bottom: 140px;
+    filter: drop-shadow(2px 2px 2px);
+    cursor: pointer;
+}
+
+#info:hover, 
+#landmark:hover {
+    opacity: 0.9;
+}
+
+#info:active, 
+#landmark:active {
+    transform: scale(0.95);
+}
+
+
+
+/* Search Bar */
+nav.top-nav {
+    margin: 10px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    background: rgba(202,235,250,0.8);
+    border-radius: 20px 5px;
+    z-index: 1;
+}
+
+select {
+    width: 300px;
+    padding: 5px 5px 5px 25px;
+    border-radius: 10px 5px;
+    background-image: url("/include/images/icons/search.png");
+    background-size: 15px;
+    background-position: 5px 7px;
+    background-repeat: no-repeat;
+}
+
+/* Data Display */
+nav.container {
+    border-top: 1px rgba(0,0,0,0.2) solid;
+}
+
+.tabIcon {
+    width: 50px;
+}
+
+.image {
+    width: 200px;
+    border-radius: 5px;
+}
+
+.nav {
+    margin-top: 50px;
+}
+
+.tab-content {
+    text-align: center;
+    margin-top: 50px;
+}
+
+.nav-link {
+    color: black;
+    padding: 5px;
+}
+
+#dataDisplay {
+    border-radius: 10px;
+    background: linear-gradient(180deg, rgba(202,235,250, 0.9) 0%, rgba(186,241,228, 0.9) 100%);
+    min-height: 100vh;
+    display: none;
+    position: absolute;
+    margin: 10px;
+    top: 0;
+    z-index: 2;
+    overflow: auto;
+    box-shadow: 1px 1px 1px 1px rgba(0,0,0,0.2);
+}
+
+@media only screen and (min-width: 500px) {
+    #dataDisplay {
+        min-height: 97vh;
+        width: 500px;
+    }
+
+    body {
+        overflow: hidden;
+    }
+} 
+
+.btn-close {
+    float: right;
+}
+
+
+/* Table */
+.left {
+    text-align: right;
+    font-weight: 700;
+}
+
+.right {
+    text-align: left;
+}
+
+.bord {
+    border-top: 1px rgba(0,0,0,0.2) solid;
+}
+
+td {
+    width: 50%;
+}
+
+
+/* Preloader */
+#preloader {  
+    position: fixed;  
+    top: 0;  
+    left: 0;  
+    right: 0;  
+    bottom: 0;  
+    z-index: 9999;  
+    overflow: hidden;  
+    background: #fff;
+}
+
+#preloader:before {  
+    content: "";  
+    position: fixed;  
+    top: calc(50% - 30px);  
+    left: calc(50% - 30px);  
+    border: 6px solid #f2f2f2;  
+    border-top: 6px solid #56829e;  
+    border-radius: 50%;  
+    width: 60px;  
+    height: 60px;  
+    -webkit-animation: animate-preloader 1s linear infinite;  
+    animation: animate-preloader 1s linear infinite;
+}
+
+@-webkit-keyframes animate-preloader {
+     0% {    
+         -webkit-transform: rotate(0deg);    
+         transform: rotate(0deg);  
+    }  
+    100% {    
+        -webkit-transform: rotate(360deg);    
+        transform: rotate(360deg);  
+    }
+}
+
+@keyframes animate-preloader {  
+    0% {    
+        -webkit-transform: rotate(0deg);    
+        transform: rotate(0deg);  
+    }  
+    100% {    
+        -webkit-transform: rotate(360deg);    
+        transform: rotate(360deg);  
+    }
+}
+
+/* Animations */ 
+@keyframes wiggle {
+    0% {
+        -webkit-transform: scale(1) rotate3d(1, 1, 0, 0deg);
+                transform: scale(1) rotate3d(1, 1, 0, 0deg);
+      }
+      50% {
+        -webkit-transform: scale(2) rotate3d(1, 1, 0, -180deg);
+                transform: scale(2) rotate3d(1, 1, 0, -180deg);
+      }
+      100% {
+        -webkit-transform: scale(1) rotate3d(1, 1, 0, -360deg);
+                transform: scale(1) rotate3d(1, 1, 0, -360deg);
+      }
+}
