@@ -6,7 +6,7 @@ error_reporting('E_All');
 $latitude = $_REQUEST['latitude'];
 $longitude = $_REQUEST['longitude'];
 
-$url='https://api.opencagedata.com/geocode/v1/json?q=' . $latitude . '+' . $longitude . '&key=591712a3b55c49629fbc003abb3dbf1e';
+$url='https://api.opencagedata.com/geocode/v1/json?q=' . $latitude . '+' . $longitude . '&key=KEY!';
 
 $ch = curl_init();
 curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
