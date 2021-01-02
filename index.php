@@ -4,12 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="include/css/style.css">
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"
-    integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A=="
-    crossorigin=""/>
-    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"
-    integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA=="
-    crossorigin=""></script>
+    <!--<link rel="stylesheet" href="include/vendors/leaflet/leaflet.css">
+    <script src="include/vendors/leaflet/leaflet.js"></script>-->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+<script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
     <link rel="stylesheet" href="include/vendors/bootstrap.min.css">
     <script src="include/vendors/bootstrap.bundle.min.js"></script>
     <title>Gazetteer</title>
@@ -22,16 +20,18 @@
         <nav class="justify-content-center top-nav">
             <h1>Gazetteer</h1>
             <?php 
-                $string = file_get_contents('include/js/countryBorders.geo.json');
+                ini_set('display_errors', 'On');
+                error_reporting('E_All');
+
+                $string = file_get_contents('include/js/countries.json');
                 $json = json_decode($string, true);
                 $baseArray = $json['features'];
-                $countries = array();
                 foreach ($baseArray as $key => $value) {
-                    $countries[$value['properties']['iso_a2']] = $value['properties']['name'];
+                    $countries[$value['properties']['ISO_A2']] = $value['properties']['ADMIN'];
                 }
                 array_multisort($countries, SORT_ASC);
-            ?>
-            <select id="countrySearch" class="m-4">  
+                ?>
+                <select id="countrySearch" class="m-4">  
                 <option value="chooseCountry" selected disabled>Choose a Country</option>  
                 <?php 
                     foreach ($countries as $key => $value) {
@@ -41,7 +41,7 @@
                     }
                 ?> 
             </select>
-        </nav>
+</nav>
         <!-- Map -->
         <div id="worldMap"></div>
         <img src="include/images/icons/info.svg" id="info">
@@ -50,9 +50,7 @@
         <!-- Data display -->
         <section id="dataDisplay" class="p-3">
             <button type="button" id="close" class="btn-close" aria-label="Close"></button>
-            <p class="text-center small">Country:</p>
             <h2 id="countryName" class="text-center m-3"></h2>
-            <p class="text-center small">Capital City:</p>
             <h3 id="capitalCity" class="text-center m-3"></h3>
             <nav class="container">
                 <div class="nav nav-pills nav-fill" id="nav-tab" role="tablist">
