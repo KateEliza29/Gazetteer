@@ -90,30 +90,35 @@ function updateSelect(countryCode) {
 //On change of select, get border coords and pan to the area. 
 $('#countrySearch').change(function() {
     countryCode = $('#countrySearch').val();
-    worldMap.removeLayer(geoJSONLayer); 
+    //worldMap.removeLayer(geoJSONLayer); 
     onSelectChange(countryCode);
 });
 
 function onSelectChange(countryCode) {
-    getInfo(countryCode);
-    fetch("include/js/countryBorders.geo.json")
-    .then(response => {
-      return response.json();
-    })
-    .then(data => {
-        let countryArr = data['features'];
-        for (let i = 0; i < countryArr.length; i++) {
-            if (countryCode == countryArr[i].properties['iso_a2']) {
-                let countryCoordsJSON = countryArr[i].geometry;
-                geoJSONLayer = L.geoJSON(countryCoordsJSON, {style: polyStyle});
-                geoJSONLayer.addTo(worldMap);
-                worldMap.fitBounds(geoJSONLayer.getBounds());
-                $("#dataDisplay").hide();
-                $("#info").css('animation', 'none');
-            }
-        }
+    console.log(countryCode);
+    //getInfo(countryCode);
+    $.ajax({
+        url: "include/php/getBounds.php",
+        type: 'POST',
+        dataType: 'json',
+        data: {
+            countryCode: countryCode
+        },
+        success: function(result) {
+          if (result.status.name == "ok") {
+            console.log(result);
+          let countryCoordsJSON = result['data'];
+          console.log(countryCoordsJSON);
+          geoJSONLayer = L.geoJSON(countryCoordsJSON, {style: polyStyle});
+          geoJSONLayer.addTo(worldMap);
+          worldMap.fitBounds(geoJSONLayer.getBounds());
+          $("#dataDisplay").hide();
+          $("#info").css('animation', 'none');
+          }
+        },
     });
 }
+
 
 
 //Update select value with map click location.
@@ -182,7 +187,7 @@ function placeMarker(result) {
 }
 
 function fillTitles(result) {
-    $('#countryName').html(result.data.openCage.country);
+    $('#countryName').html(result.data.restCountries.name);
     $('#capitalCity').html(result.data.restCountries.capitalCity);
 }
 
