@@ -21,6 +21,7 @@ $result=curl_exec($ch);
 curl_close($ch);
 $decodeRestCountries = json_decode($result,true);
 
+$output['data']['restCountries']['name'] = $decodeRestCountries['name'];
 $output['data']['restCountries']['capitalCity'] = $decodeRestCountries['capital'];
 $output['data']['restCountries']['borders'] = $decodeRestCountries['borders'];
 $output['data']['restCountries']['callingCodes'] = $decodeRestCountries['callingCodes'];
@@ -34,10 +35,12 @@ $capitalCityPre = $decodeRestCountries['capital'];
 $capitalCity = str_replace(" ", "+", $capitalCityPre);
 $currency = $decodeRestCountries['currencies'][0]['code']; 
 $language = $decodeRestCountries['languages'][0]['iso639_1']; 
+$countryPre = $decodeRestCountries['name'];
+$country = str_replace(" ", "+", $countryPre);
 
 
 //OpenCage API Call
-$url='https://api.opencagedata.com/geocode/v1/json?q=' . $capitalCity . '&key=KEY!&limit=1';
+$url='https://api.opencagedata.com/geocode/v1/json?q=' . $capitalCity . '&key=591712a3b55c49629fbc003abb3dbf1e&limit=1';
 $ch = curl_init();
 curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 curl_setopt($ch, CURLOPT_URL, $url);
@@ -47,22 +50,20 @@ $result=curl_exec($ch);
 curl_close($ch);
 $decodeOpenCage = json_decode($result,true);
 
-$output['data']['openCage']['country'] = $decodeOpenCage['results'][0]['components']['country'];
 $output['data']['openCage']['lnglat'] = $decodeOpenCage['results'][0]['geometry'];
 $output['data']['openCage']['driveOn'] = $decodeOpenCage['results'][0]['annotations']['roadinfo'];
 $output['data']['openCage']['timezone'] = $decodeOpenCage['results'][0]['annotations']['timezone'];
 $output['data']['openCage']['sun'] = $decodeOpenCage['results'][0]['annotations']['sun'];
 
 //OpenCage Variables for use in other API calls. 
-$countryPre = $decodeOpenCage['results'][0]['components']['country'];
-$country = str_replace(" ", "+", $countryPre);
+
 $capitalLat = $decodeOpenCage['results'][0]['geometry']['lat'];
 $capitalLong = $decodeOpenCage['results'][0]['geometry']['lng'];
 
 
 
 //Open Weather API Call 
-$url='api.openweathermap.org/data/2.5/weather?q=' . $capitalCity . '&appid=ID!&units=metric';
+$url='api.openweathermap.org/data/2.5/weather?q=' . $capitalCity . '&appid=738aaab36db4be1b29ce7959b28a40e9&units=metric';
 $ch = curl_init();
 curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 curl_setopt($ch, CURLOPT_URL, $url);
@@ -86,7 +87,7 @@ curl_setopt($ch, CURLOPT_URL, $url);
 curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, FALSE);
 curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
 curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "GET");
-curl_setopt($ch, CURLOPT_HTTPHEADER, ["Authorization: Client-ID ID!"]);
+curl_setopt($ch, CURLOPT_HTTPHEADER, ["Authorization: Client-ID 22cc0f0a2015d5f"]);
 
 $result=curl_exec($ch);
 curl_close($ch);
@@ -97,7 +98,7 @@ $output['data']['imgur'] = $decodeImgur['data'][0]['images'][0];
 
 
 //Wikipedia API Call
-$url = 'http://api.geonames.org/wikipediaSearchJSON?q=' . $country . '&title&maxRows=3&username=USERNAME!';
+$url = 'http://api.geonames.org/wikipediaSearchJSON?q=' . $country . '&title&maxRows=3&username=katebrown2901';
 $ch = curl_init();
 curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 curl_setopt($ch, CURLOPT_URL, $url);
@@ -120,7 +121,7 @@ curl_setopt($ch, CURLOPT_URL, $url);
 curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, FALSE);
 curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
 curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "GET");
-curl_setopt($ch, CURLOPT_HTTPHEADER, ["x-rapidapi-host: covid-19-data.p.rapidapi.com", "x-rapidapi-key: KEY!"]);
+curl_setopt($ch, CURLOPT_HTTPHEADER, ["x-rapidapi-host: covid-19-data.p.rapidapi.com", "x-rapidapi-key: 3bddbe3c1emsh9ac607d46b03348p11fe22jsn45cb3b218e79"]);
 
 
 $result = curl_exec($ch);
@@ -140,7 +141,7 @@ curl_setopt($ch, CURLOPT_URL, $url);
 curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, FALSE);
 curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
 curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "GET");
-curl_setopt($ch, CURLOPT_HTTPHEADER, ["x-rapidapi-host: language-translation.p.rapidapi.com", "x-rapidapi-key: KEY!"]);
+curl_setopt($ch, CURLOPT_HTTPHEADER, ["x-rapidapi-host: language-translation.p.rapidapi.com", "x-rapidapi-key: 3bddbe3c1emsh9ac607d46b03348p11fe22jsn45cb3b218e79"]);
 
 $result = curl_exec($ch);
 $err = curl_error($curl);
