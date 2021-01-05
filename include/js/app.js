@@ -20,6 +20,7 @@ let boundaries = [
 let longitude;
 let latitude;
 let landmarkLayer;
+let searchCount = 0;
 
 
 //Set up map. 
@@ -43,6 +44,13 @@ var pin = L.icon({
     iconAnchor: [22, 94],
     popupAnchor: [-3, -76]
 });
+
+var capIcon = L.ExtraMarkers.icon({
+    icon: 'fas fa-angle-double-down',
+    markerColor: 'red',
+    shape: 'circle',
+    prefix: 'fa',
+  });
 
 
 //Set up boundaries. 
@@ -88,21 +96,21 @@ function updateSelect(countryCode) {
 
 
 //On change of select, get border coords and pan to the area. 
-$('#countrySearch').change(function() {
-    countryCode = $('#countrySearch').val();
-    //worldMap.removeLayer(geoJSONLayer); 
+$('#countrySelect').change(function() {
+    countryCode = $('#countrySelect').val();
+    worldMap.removeLayer(geoJSONLayer); 
     onSelectChange(countryCode);
 });
 
 function onSelectChange(countryCode) {
     console.log(countryCode);
-    //getInfo(countryCode);
+    getInfo(countryCode);
     $.ajax({
         url: "include/php/getBounds.php",
         type: 'POST',
         dataType: 'json',
         data: {
-            countryCode: countryCode
+            countryCode: countryCode,
         },
         success: function(result) {
           if (result.status.name == "ok") {
@@ -150,18 +158,21 @@ function handleMapClick(e) {
 
 //Perform API calls to retreive data. 
 function getInfo(countryCode) {
+    console.log(searchCount);
     $.ajax({
         url: "include/php/getInfo.php",
         type: 'POST',
         dataType: 'json',
         data: {
             countryCode: countryCode, 
+            count: searchCount
         },
         success: function(result) {
           if (result.status.name == "ok") {
             console.log(result);
             longitude = result.data.openCage.lnglat.lng;
             latitude = result.data.openCage.lnglat.lat;
+            fillSelect(result);
             placeMarker(result);
             fillTitles(result);
             fillStats(result);
@@ -170,19 +181,37 @@ function getInfo(countryCode) {
             fillCurrency(result);
             fillCovid(result);
             $("#info").css('animation', 'wiggle 0.7s linear both');
+            searchCount++;
+            console.log(searchCount);
           }
         },
     });
 }
 
+
+
 //Fill in Data
+function fillSelect(result) {
+    if (result.data.countryList) {
+        $('#countrySelect').html('');
+        $.each(result.data.countryList, function(index) {
+            $('#countrySelect').append($("<option>", {
+                value: result.data.countryList[index].code,
+                text: result.data.countryList[index].name
+            })); 
+        });
+    }
+}
+
+
 function placeMarker(result) {
     let long = result.data.openCage.lnglat.lng;
     let lat = result.data.openCage.lnglat.lat;
     if (worldMap.hasLayer(capitalMarker)) {
         worldMap.removeLayer(capitalMarker);
      }            
-    capitalMarker = L.marker([lat, long], {icon: pin});
+    capitalMarker = L.marker([lat, long], {icon: capIcon});
+    capitalMarker.bindPopup(result.data.restCountries.capitalCity).openPopup(); //Can add new icon in here.
     worldMap.addLayer(capitalMarker);
 }
 
@@ -311,7 +340,9 @@ function getLocalTime(offset) {
     console.log('new unix = ' + newUnix);
     let time = new Date(newUnix * 1000).toLocaleTimeString("en-UK");
     return time;
-}
+} 
+
+
 
 //DOM Stuff.
 $( "#close" ).click(function() {
