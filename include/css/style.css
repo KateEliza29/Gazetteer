@@ -138,6 +138,8 @@ select {
     .card {
         width: 500px;
         height: 750px;
+        margin-top: 150px;
+        margin-left: 150px;
     } 
 
     .tab-content,
@@ -158,6 +160,14 @@ select {
     }
 }
 
+@media only screen and (max-height: 750px) {
+    .card {
+        width: 500px;
+        height: 100vh;
+        margin-top: 0px;
+        margin-left: 0px;
+    } 
+}
 
 /* Table */
 
