@@ -191,7 +191,7 @@ table .right {
     }
 }
 
-/*Preloader 
+Preloader 
 #preloader {  
     position: fixed;  
     top: 0;  
@@ -226,7 +226,7 @@ table .right {
         -webkit-transform: rotate(360deg);    
         transform: rotate(360deg);  
     }
-}*/
+}
 
 @keyframes animate-preloader {  
     0% {    
