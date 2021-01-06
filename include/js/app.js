@@ -372,10 +372,8 @@ function getLandmarks(longitude, latitude) {
         success: function(result) {
           if (result.status.name == "ok") {
             let landmarksArr = [];
-            //let base = result.data.landMarks.Response.View[0].Result;
             let base = result.data.landMarks.items;
             for (let i=0; i<base.length; i++) {
-                //let landmark = L.marker([base[i].Location.DisplayPosition.Latitude, base[i].Location.DisplayPosition.Longitude]);
                 let landmark = L.marker(
                     L.latLng(
                         parseFloat(base[i].position.lat),
