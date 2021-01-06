@@ -124,8 +124,9 @@ select {
     height: 100px;
 }
 
-.tab-content {
-    height: calc(96vh - 190px);
+.tab-content,
+#cardMain {
+    max-height: calc(96vh - 200px);
 }
 
 .image {
@@ -139,8 +140,9 @@ select {
         height: 750px;
     } 
 
-    .tab-content {
-        height: 500px;
+    .tab-content,
+    #cardMain {
+        height: 450px;
     }
 
     .tabIcon {

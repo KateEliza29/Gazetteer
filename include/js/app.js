@@ -38,18 +38,12 @@ createMap();
 
 
 //Set up icons.
-var pin = L.icon({
-    iconUrl: 'include/images/icons/push-pin.svg',
-    iconSize: [60, 110],
-    iconAnchor: [22, 94],
-    popupAnchor: [-3, -76]
-});
-
 var capIcon = L.ExtraMarkers.icon({
     icon: 'fas fa-angle-double-down',
     markerColor: 'red',
     shape: 'circle',
     prefix: 'fa',
+    zIndexOffset: 1000
   });
 
 
@@ -73,7 +67,6 @@ function getLocation() {
   }
 
 function locationSuccess(pos) {
-    console.log(pos);
     updateSelect(countryCode);
     onSelectChange(countryCode);
 }
@@ -103,7 +96,7 @@ $('#countrySelect').change(function() {
 });
 
 function onSelectChange(countryCode) {
-    console.log(countryCode);
+    removeLandmarks();
     getInfo(countryCode);
     $.ajax({
         url: "include/php/getBounds.php",
@@ -114,9 +107,7 @@ function onSelectChange(countryCode) {
         },
         success: function(result) {
           if (result.status.name == "ok") {
-            console.log(result);
           let countryCoordsJSON = result['data'];
-          console.log(countryCoordsJSON);
           geoJSONLayer = L.geoJSON(countryCoordsJSON, {style: polyStyle});
           geoJSONLayer.addTo(worldMap);
           worldMap.fitBounds(geoJSONLayer.getBounds());
@@ -145,7 +136,6 @@ function handleMapClick(e) {
         },
         success: function(result) {
           if (result.status.name == "ok") {
-            console.log(result);
             countryCode = result.data[0].components["ISO_3166-1_alpha-2"];
             worldMap.removeLayer(geoJSONLayer); 
             updateSelect(countryCode);
@@ -158,7 +148,6 @@ function handleMapClick(e) {
 
 //Perform API calls to retreive data. 
 function getInfo(countryCode) {
-    console.log(searchCount);
     $.ajax({
         url: "include/php/getInfo.php",
         type: 'POST',
@@ -168,8 +157,6 @@ function getInfo(countryCode) {
             count: searchCount
         },
         success: function(result) {
-          if (result.status.name == "ok") {
-            console.log(result);
             longitude = result.data.openCage.lnglat.lng;
             latitude = result.data.openCage.lnglat.lat;
             fillSelect(result);
@@ -182,8 +169,6 @@ function getInfo(countryCode) {
             fillCovid(result);
             $("#info").css('animation', 'wiggle 0.7s linear both');
             searchCount++;
-            console.log(searchCount);
-          }
         },
     });
 }
@@ -211,77 +196,161 @@ function placeMarker(result) {
         worldMap.removeLayer(capitalMarker);
      }            
     capitalMarker = L.marker([lat, long], {icon: capIcon});
-    capitalMarker.bindPopup(result.data.restCountries.capitalCity).openPopup(); //Can add new icon in here.
+    capitalMarker.bindPopup(result.data.restCountries.capitalCity).openPopup(); 
     worldMap.addLayer(capitalMarker);
 }
 
 function fillTitles(result) {
-    $('#countryName').html(result.data.restCountries.name);
-    $('#capitalCity').html(result.data.restCountries.capitalCity);
+    let data = ['#countryName', '#capitalCity'];
+    if (result.status.restCountries == '200') {
+        $('#countryName').html(result.data.restCountries.name);
+        $('#capitalCity').html(result.data.restCountries.capitalCity);
+    }
+    else {
+        $.each(data, function(value) {
+            $(value).html('');
+          });
+    }
 }
 
 function fillStats(result) {
-    $('#neighbourCountries').html(result.data.restCountries.borders.join(", "));
-    $('#callingCode').html(result.data.restCountries.callingCodes);
-    $('#driving').html(result.data.openCage.driveOn);
-    $('#timeZone').html(result.data.openCage.timezone.short_name);
-    $('#driving').html(result.data.openCage.driveOn['drive_on']);
-    $('#flag').attr("src", result.data.restCountries.flag);
-    let offset = result.data.openCage.timezone.offset_sec;
-    let currentTime = getLocalTime(offset);
-    $('#currentTime').html(currentTime);
-    let sunrise = correctTimestamp(result.data.openCage.sun.rise.apparent, offset); 
-    let sunset = correctTimestamp(result.data.openCage.sun.set.apparent, offset);
-    $('#sunrise').html(sunrise);
-    $('#sunset').html(sunset);
+    let data1 = ['#neighbourCountries', '#callingCode', '#flag'];
+    if (result.status.restCountries == '200') {
+        $('#neighbourCountries').html(result.data.restCountries.borders.join(", "));
+        $('#callingCode').html(result.data.restCountries.callingCodes);
+        $('#flag').attr("src", result.data.restCountries.flag);
+    }
+    else {
+        $.each(data1, function(value) {
+            $(value).html('');
+          });
+    }
+    let data2 = ['#timeZone', '#driving', '#currentTime', '#sunrise', '#sunset']
+    if (result.status.openCage == '200') {
+        $('#timeZone').html(result.data.openCage.timezone.short_name);
+        $('#driving').html(result.data.openCage.driveOn['drive_on']);
+        let offset = result.data.openCage.timezone.offset_sec;
+        let currentTime = getLocalTime(offset);
+        $('#currentTime').html(currentTime);
+        let sunrise = correctTimestamp(result.data.openCage.sun.rise.apparent, offset); 
+        let sunset = correctTimestamp(result.data.openCage.sun.set.apparent, offset);
+        $('#sunrise').html(sunrise);
+        $('#sunset').html(sunset);
+    }
+    else {
+        $.each(data2, function(value) {
+            $(value).html('');
+          });
+    }
 }
 
 function fillWeather(result) {
-    $('#weatherDesc').html(result.data.openWeather.weather.description);
-    $('#temp').html(result.data.openWeather.temp.temp);
-    $('#feelsLike').html(result.data.openWeather.temp.feels_like);
-    $('#humidity').html(result.data.openWeather.temp.humidity);
-    $('#windSpeed').html(result.data.openWeather.wind);
-    $('#weatherSymbol').attr("src", 'http://openweathermap.org/img/wn/' + result.data.openWeather.weather.icon +'@2x.png');
+    let data = ['#weatherDesc', '#temp', '#feelsLike', '#humidity', '#windSpeed', '#weatherSymbol'];
+    if (result.status.openWeather == '200') {
+        $('#weatherDesc').html(result.data.openWeather.weather.description);
+        $('#temp').html(result.data.openWeather.temp.temp);
+        $('#feelsLike').html(result.data.openWeather.temp.feels_like);
+        $('#humidity').html(result.data.openWeather.temp.humidity);
+        $('#windSpeed').html(result.data.openWeather.wind);
+        $('#weatherSymbol').attr("src", 'http://openweathermap.org/img/wn/' + result.data.openWeather.weather.icon +'@2x.png');
+    }
+    else {
+        $.each(data, function(value) {
+            $(value).html('');
+          });
+    }
 }
 
 function fillPeople(result) {
-    $('#population').html(result.data.restCountries.population.toLocaleString('en-UK'));
-    $('#language').html(result.data.restCountries.languages[0].name);
-    $('#translation').html(result.data.translate.translatedText);
-    $('#wiki1').html(result.data.wiki[0].title);
-    $('#wiki1').attr('href', 'http://' + result.data.wiki[0].wikipediaUrl);
-    $('#wiki2').html(result.data.wiki[1].title);
-    $('#wiki2').attr('href', 'http://' + result.data.wiki[1].wikipediaUrl);
-    $('#wiki3').html(result.data.wiki[2].title);
-    $('#wiki3').attr('href', 'http://' + result.data.wiki[2].wikipediaUrl);
-    if (result.data.imgur != null) {
+    let data1 = ['#population', '#language'];
+    if (result.status.restCountries == '200') {
+        $('#population').html(result.data.restCountries.population.toLocaleString('en-UK'));
+        $('#language').html(result.data.restCountries.languages[0].name);
+    }
+    else {
+        $.each(data1, function(value) {
+            $(value).html('');
+          });
+    }
+    if (result.status.translate == '200') {
+        $('#translation').html(result.data.translate.translatedText);
+    }
+    else {
+        $('#translation').html('')
+    }
+    let data2 = ['#wiki1', '#wiki2', '#wiki3'];
+    if (result.status.wiki == '200') {
+        $('#wiki1').html(result.data.wiki[0].title);
+        $('#wiki1').attr('href', 'http://' + result.data.wiki[0].wikipediaUrl);
+        $('#wiki2').html(result.data.wiki[1].title);
+        $('#wiki2').attr('href', 'http://' + result.data.wiki[1].wikipediaUrl);
+        $('#wiki3').html(result.data.wiki[2].title);
+        $('#wiki3').attr('href', 'http://' + result.data.wiki[2].wikipediaUrl);
+    }
+    else {
+        $.each(data2, function(value) {
+            $(value).html('');
+          });
+    }
+    if (result.status.imgur.link) {
         $('#imgurImg').attr("src", result.data.imgur.link);
+    }
+    else {
+        $('#imgurImg').attr("src", '');
     }
 }
 
 function fillCurrency(result) {
-    $('#currency').html(result.data.restCountries.currencies[0].name);
-    $('#currCode').html(result.data.restCountries.currencies[0].code);
-    $('#currSymbol').html(result.data.restCountries.currencies[0].symbol);
-    $('#currSymbol2').html(result.data.restCountries.currencies[0].symbol);
-    $('#exchangeRate').html(result.data.exchangeRate.result.toFixed(2));
+    let data = ['#currency', '#currCode', '#currSymbol', '#currSymbol2'];
+    if (result.status.restCountries == '200') {
+        $('#currency').html(result.data.restCountries.currencies[0].name);
+        $('#currCode').html(result.data.restCountries.currencies[0].code);
+        $('#currSymbol').html(result.data.restCountries.currencies[0].symbol);
+        $('#currSymbol2').html(result.data.restCountries.currencies[0].symbol);
+    }
+    else {
+        $.each(data, function(value) {
+            $(value).html('');
+          });
+    }
+    if (result.status.exchangeRate == '200') {
+        $('#exchangeRate').html(result.data.exchangeRate.result.toFixed(2));
+    }
+    else {
+        $('#exchangeRate').html('');
+    }
 }
 
 function fillCovid(result) {
-    let affectedPop = result.data.covid[0].confirmed / result.data.restCountries.population * 100;
-    affectedPop = affectedPop.toFixed(2);
-    let recovered = result.data.covid[0].recovered / result.data.covid[0].confirmed * 100;
-    recovered = recovered.toFixed(2);
-    let dead = result.data.covid[0].deaths / result.data.covid[0].confirmed * 100;
-    dead = dead.toFixed(2);
-    $('#population2').html(result.data.restCountries.population.toLocaleString('en-UK'));
-    $('#totalCases').html(result.data.covid[0].confirmed.toLocaleString('en-UK'));
-    $('#popAffected').html(affectedPop);
-    $('#recovered').html(result.data.covid[0].recovered.toLocaleString('en-UK'));
-    $('#percRecovered').html(recovered);
-    $('#deaths').html(result.data.covid[0].deaths.toLocaleString('en-UK'));
-    $('#percDeaths').html(dead);
+    let data1 = ['#totalCases', '#recovered', '#deaths', '#percDeaths'];
+    let data2 = ['#popAffected', '#population2'];
+    if (result.status.covid == '200') {
+        let recovered = result.data.covid[0].recovered / result.data.covid[0].confirmed * 100;
+        recovered = recovered.toFixed(2);
+        let dead = result.data.covid[0].deaths / result.data.covid[0].confirmed * 100;
+        dead = dead.toFixed(2);
+        $('#totalCases').html(result.data.covid[0].confirmed.toLocaleString('en-UK'));
+        $('#recovered').html(result.data.covid[0].recovered.toLocaleString('en-UK'));
+        $('#percRecovered').html(recovered);
+        $('#deaths').html(result.data.covid[0].deaths.toLocaleString('en-UK'));
+        $('#percDeaths').html(dead);
+        if (result.status.restCountries == '200') {
+            let affectedPop = result.data.covid[0].confirmed / result.data.restCountries.population * 100;
+            affectedPop = affectedPop.toFixed(2);
+            $('#popAffected').html(affectedPop);
+            $('#population2').html(result.data.restCountries.population.toLocaleString('en-UK'));
+        }
+        else {
+            $.each(data2, function(value) {
+                $(value).html('');
+              });
+        }
+    }
+    else {
+        $.each(data1, function(value) {
+            $(value).html('');
+          });
+    }
 }
 
 
@@ -302,21 +371,24 @@ function getLandmarks(longitude, latitude) {
         },
         success: function(result) {
           if (result.status.name == "ok") {
-            console.log(result);
-            let data = result.data.landMarks.Response.View[0].Result;
             let landmarksArr = [];
-            for (let i=0; i<10; i++) {
-                let landmarkLat = data[i].Location.DisplayPosition.Latitude;
-                let landmarkLong = data[i].Location.DisplayPosition.Longitude;
-                let landmarkMarker = L.marker([landmarkLat, landmarkLong]);
-                landmarkMarker.bindPopup(data[i].Location.Name + ', ' + data[i].Location.LocationType).openPopup();
-                landmarksArr.push(landmarkMarker);
+            //let base = result.data.landMarks.Response.View[0].Result;
+            let base = result.data.landMarks.items;
+            for (let i=0; i<base.length; i++) {
+                //let landmark = L.marker([base[i].Location.DisplayPosition.Latitude, base[i].Location.DisplayPosition.Longitude]);
+                let landmark = L.marker(
+                    L.latLng(
+                        parseFloat(base[i].position.lat),
+                        parseFloat(base[i].position.lng)
+                      )  
+                )
+                landmark.bindPopup(base[i].title + ', ' + base[i].categories[0].name).openPopup();
+                landmarksArr.push(landmark);
             }
-            if (worldMap.hasLayer(landmarkLayer)) {
-                worldMap.removeLayer(landmarkLayer);
-             }            
-            landmarkLayer = L.layerGroup(landmarksArr);
+            landmarkLayer = L.layerGroup();
             landmarkLayer.addTo(worldMap);
+            let landmarks = L.featureGroup(landmarksArr);
+            landmarks.addTo(landmarkLayer);
             }
           }
     });
@@ -333,15 +405,11 @@ function correctTimestamp(unix, offset) {
 }
 
 function getLocalTime(offset) {
-    console.log('offset = ' + offset);
     let currentUnix = Math.floor(Date.now() / 1000);
-    console.log('current unix = ' + currentUnix);
     let newUnix = currentUnix + offset;
-    console.log('new unix = ' + newUnix);
     let time = new Date(newUnix * 1000).toLocaleTimeString("en-UK");
     return time;
 } 
-
 
 
 //DOM Stuff.
@@ -355,4 +423,9 @@ $("#info").click(function() {
     $("#info").css('animation', 'none');
 });
 
+function removeLandmarks() {
+    if (worldMap.hasLayer(landmarkLayer)) {
+        worldMap.removeLayer(landmarkLayer);
+     }   
+}
 
