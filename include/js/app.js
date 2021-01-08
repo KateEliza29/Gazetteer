@@ -44,8 +44,14 @@ var capIcon = L.ExtraMarkers.icon({
     shape: 'circle',
     prefix: 'fa',
     zIndexOffset: 1000
-  });
+});
 
+var landmarkIcon = L.ExtraMarkers.icon({
+    icon: 'fas fa-monument',
+    markerColor: 'purple',
+    shape: 'penta',
+    prefix: 'fa',
+});
 
 //Set up boundaries. 
 function polyStyle(feature) {
@@ -160,6 +166,7 @@ function getInfo(countryCode) {
             longitude = result.data.openCage.lnglat.lng;
             latitude = result.data.openCage.lnglat.lat;
             fillSelect(result);
+            getLandmarks(result);
             placeMarker(result);
             fillTitles(result);
             fillStats(result);
@@ -355,43 +362,27 @@ function fillCovid(result) {
 
 
 //On click of landmark icon, perform API call and display landmark icons. 
-$('#landmark').click(function() {
-    getLandmarks(longitude, latitude);
-    worldMap.setView([latitude, longitude], 15)
-});
-
-function getLandmarks(longitude, latitude) {
-    $.ajax({
-        url: "include/php/getLandmarks.php",
-        type: 'POST',
-        dataType: 'json',
-        data: {
-            longitude: longitude,
-            latitude: latitude 
-        },
-        success: function(result) {
-          if (result.status.name == "ok") {
-            let landmarksArr = [];
-            let base = result.data.landMarks.items;
-            for (let i=0; i<base.length; i++) {
-                let landmark = L.marker(
-                    L.latLng(
-                        parseFloat(base[i].position.lat),
-                        parseFloat(base[i].position.lng)
-                      )  
-                )
-                landmark.bindPopup(base[i].title + ', ' + base[i].categories[0].name).openPopup();
-                landmarksArr.push(landmark);
-            }
-            landmarkLayer = L.layerGroup();
-            landmarkLayer.addTo(worldMap);
-            let landmarks = L.featureGroup(landmarksArr);
-            landmarks.addTo(landmarkLayer);
-            }
-          }
-    });
+function getLandmarks(result) {
+    if (result.status.landMarks == "200") {
+      let landmarksArr = [];
+      let base = result.data.landMarks.items;
+      for (let i=0; i<base.length; i++) {
+          let landmark = L.marker(
+              L.latLng(
+                  parseFloat(base[i].position.lat),
+                  parseFloat(base[i].position.lng)
+              ),
+                {icon: landmarkIcon}  
+          )
+          landmark.bindPopup(base[i].title + ', ' + base[i].categories[0].name).openPopup();
+          landmarksArr.push(landmark);
+      }
+      landmarkLayer = L.markerClusterGroup();
+      landmarkLayer.addTo(worldMap);
+      let landmarks = L.featureGroup(landmarksArr);
+      landmarks.addTo(landmarkLayer);
+      }
 }
-
 
 
 //Computation Functions

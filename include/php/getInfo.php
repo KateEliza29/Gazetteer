@@ -95,6 +95,30 @@ else {
 
 
 
+//Get Landmarks
+$url = 'https://discover.search.hereapi.com/v1/discover?apiKey=LQB09zWJr1LcBdz-Y1nY8lI6rid58s7cOkJcNpi5zP4&q=historical+monument&in=circle:' . $capitalLat . ',' . $capitalLong . ';r=10000&limit=10&lang=en';
+$ch = curl_init();
+curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+curl_setopt($ch, CURLOPT_URL, $url);
+curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, FALSE);
+curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
+curl_setopt($ch, CURLOPT_FAILONERROR, true);
+$result=curl_exec($ch);
+curl_close($ch);
+$decodeLandmarks = json_decode($result,true);
+$responseCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+if ($result === false) {
+    $error_msg = curl_error($ch);
+    $output['status']['landMarks'] = $responseCode;
+}
+else {
+    $output['status']['landMarks'] = '200';
+    $output['data']['landMarks'] = $decodeLandmarks;
+}
+
+
+
+
 //Open Weather API Call 
 $openWeatherStartTime = microtime(true);
 $url='api.openweathermap.org/data/2.5/weather?q=' . $capitalCity . '&appid=738aaab36db4be1b29ce7959b28a40e9&units=metric';
