@@ -24,3 +24,5 @@ The requirement was to use multiple APIs, Leaflet and a geoJSON file to display 
 * [Sunrise Sunset](https://sunrise-sunset.org/api)
 
 ## Screenshots
+![A screenshot of the Gazetteer desktop site](screenshot1.png)
+![A screenshot of the Gazetteer mobile site](screenshot2.png)
