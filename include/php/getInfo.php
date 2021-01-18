@@ -66,7 +66,7 @@ else {
 
 //OpenCage API Call
 $openCageStartTime = microtime(true);
-$url='https://api.opencagedata.com/geocode/v1/json?q=' . $capitalCity . '&key=591712a3b55c49629fbc003abb3dbf1e&limit=1';
+$url='https://api.opencagedata.com/geocode/v1/json?q=' . $capitalCity . '&key=&limit=1';
 $ch = curl_init();
 curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 curl_setopt($ch, CURLOPT_URL, $url);
@@ -96,7 +96,7 @@ else {
 
 
 //Get Landmarks
-$url = 'https://discover.search.hereapi.com/v1/discover?apiKey=LQB09zWJr1LcBdz-Y1nY8lI6rid58s7cOkJcNpi5zP4&q=historical+monument&in=circle:' . $capitalLat . ',' . $capitalLong . ';r=10000&limit=10&lang=en';
+$url = 'https://discover.search.hereapi.com/v1/discover?apiKey==historical+monument&in=circle:' . $capitalLat . ',' . $capitalLong . ';r=10000&limit=10&lang=en';
 $ch = curl_init();
 curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 curl_setopt($ch, CURLOPT_URL, $url);
@@ -121,7 +121,7 @@ else {
 
 //Open Weather API Call 
 $openWeatherStartTime = microtime(true);
-$url='api.openweathermap.org/data/2.5/weather?q=' . $capitalCity . '&appid=738aaab36db4be1b29ce7959b28a40e9&units=metric';
+$url='api.openweathermap.org/data/2.5/weather?q=' . $capitalCity . '&appid=&units=metric';
 $ch = curl_init();
 curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 curl_setopt($ch, CURLOPT_URL, $url);
@@ -156,7 +156,7 @@ curl_setopt($ch, CURLOPT_URL, $url);
 curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, FALSE);
 curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
 curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "GET");
-curl_setopt($ch, CURLOPT_HTTPHEADER, ["Authorization: Client-ID 22cc0f0a2015d5f"]);
+curl_setopt($ch, CURLOPT_HTTPHEADER, ["Authorization: Client-ID "]);
 curl_setopt($ch, CURLOPT_FAILONERROR, true);
 $result=curl_exec($ch);
 curl_close($ch);
@@ -178,7 +178,7 @@ else {
 
 //Wikipedia API Call
 $wikiStartTime = microtime(true);
-$url = 'http://api.geonames.org/wikipediaSearchJSON?q=' . $country . '&title&maxRows=3&username=katebrown2901';
+$url = 'http://api.geonames.org/wikipediaSearchJSON?q=' . $country . '&title&maxRows=3&username=';
 $ch = curl_init();
 curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 curl_setopt($ch, CURLOPT_URL, $url);
@@ -212,7 +212,7 @@ curl_setopt($ch, CURLOPT_URL, $url);
 curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, FALSE);
 curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
 curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "GET");
-curl_setopt($ch, CURLOPT_HTTPHEADER, ["x-rapidapi-host: covid-19-data.p.rapidapi.com", "x-rapidapi-key: 3bddbe3c1emsh9ac607d46b03348p11fe22jsn45cb3b218e79"]);
+curl_setopt($ch, CURLOPT_HTTPHEADER, ["x-rapidapi-host: covid-19-data.p.rapidapi.com", "x-rapidapi-key: "]);
 curl_setopt($ch, CURLOPT_FAILONERROR, true);
 $result = curl_exec($ch);
 curl_close($ch);
@@ -231,7 +231,7 @@ else {
 
 
 
-/*Google Translate API Call
+//Google Translate API Call
 $url = "https://language-translation.p.rapidapi.com/translateLanguage/translate?text=Hello!%20How%20are%20you%20today%3F&type=plain&target=" . $language;
 $ch = curl_init();
 
@@ -240,7 +240,7 @@ curl_setopt($ch, CURLOPT_URL, $url);
 curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, FALSE);
 curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
 curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "GET");
-curl_setopt($ch, CURLOPT_HTTPHEADER, ["x-rapidapi-host: language-translation.p.rapidapi.com", "x-rapidapi-key: 3bddbe3c1emsh9ac607d46b03348p11fe22jsn45cb3b218e79"]);
+curl_setopt($ch, CURLOPT_HTTPHEADER, ["x-rapidapi-host: language-translation.p.rapidapi.com", "x-rapidapi-key: "]);
 curl_setopt($ch, CURLOPT_FAILONERROR, true);
 $result = curl_exec($ch);
 $err = curl_error($curl);
